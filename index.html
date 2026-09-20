@@ -94,8 +94,6 @@
         }
         .btn-pay:active { transform: scale(0.97); }
         .btn-pay:disabled { opacity: 0.4; }
-        
-        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -135,7 +133,7 @@
     </div>
 
     <!-- 3. Длительность (только для 7+ лет, живопись) -->
-    <div id="duration-block" class="hidden">
+    <div id="duration-block" style="display: none;">
         <div class="section-title">3. Длительность</div>
         <div class="grid" id="duration-grid">
             <div class="card" data-duration="1h" data-name="1 час">
@@ -262,15 +260,9 @@
             // Показываем блок длительности только для 7+ лет и живописи
             const durationBlock = document.getElementById('duration-block');
             if (ageGroup === 'old' && selectedType === 'paint') {
-                durationBlock.classList.remove('hidden');
+                durationBlock.style.display = 'block';
             } else {
-                durationBlock.classList.add('hidden');
-            }
-            
-            // Определяем длительность
-            let duration = '1h';
-            if (ageGroup === 'old' && selectedType === 'paint') {
-                duration = selectedDuration || null;
+                durationBlock.style.display = 'none';
             }
             
             // Считаем цену
@@ -280,8 +272,8 @@
                     price = PRICES.young[key] || 0;
                 } else {
                     if (selectedType === 'paint') {
-                        if (duration) {
-                            const key = `${selectedFormat}_paint_${duration}`;
+                        if (selectedDuration) {
+                            const key = `${selectedFormat}_paint_${selectedDuration}`;
                             price = PRICES.old[key] || 0;
                         } else {
                             price = 0;
