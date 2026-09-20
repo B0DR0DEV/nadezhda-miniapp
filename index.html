@@ -94,12 +94,31 @@
         }
         .btn-pay:active { transform: scale(0.97); }
         .btn-pay:disabled { opacity: 0.4; }
+        
+        .hidden { display: none; }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>🎨 Студия Надежды</h1>
         <p>Рисование и лепка для детей</p>
+    </div>
+
+    <!-- Блок для возраста (скрытый, управляется из бота) -->
+    <div id="age-block" class="hidden">
+        <div class="section-title">Возраст</div>
+        <div class="grid" id="age-grid">
+            <div class="card" data-age="young" data-name="До 7 лет">
+                <div class="icon">👶</div>
+                <div class="title">До 7 лет</div>
+                <div class="sub">1 час</div>
+            </div>
+            <div class="card" data-age="old" data-name="7+ лет">
+                <div class="icon">🧑</div>
+                <div class="title">7 лет и старше</div>
+                <div class="sub">1 или 1.5 часа</div>
+            </div>
+        </div>
     </div>
 
     <!-- 1. Формат занятия -->
@@ -132,9 +151,9 @@
         </div>
     </div>
 
-    <!-- 3. Длительность (только для 7+ лет, живопись) -->
-    <div id="duration-block" style="display: none;">
-        <div class="section-title">3. Длительность</div>
+    <!-- Блок для длительности (только для 7+ лет, живопись) -->
+    <div id="duration-block" class="hidden">
+        <div class="section-title">Длительность</div>
         <div class="grid" id="duration-grid">
             <div class="card" data-duration="1h" data-name="1 час">
                 <div class="icon">⏱</div>
@@ -147,8 +166,8 @@
         </div>
     </div>
 
-    <!-- 4. Данные ученика -->
-    <div class="section-title">4. Данные ученика</div>
+    <!-- 3. Данные ученика -->
+    <div class="section-title">3. Данные ученика</div>
     <div class="input-group">
         <label>Имя ребёнка</label>
         <input type="text" id="child-name" placeholder="Например, Аня">
@@ -178,7 +197,7 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         
-        // Получаем возраст из URL (бот передаёт ?age=young или ?age=old)
+        // Получаем возраст из параметров URL (бот передаст)
         const urlParams = new URLSearchParams(window.location.search);
         const ageGroup = urlParams.get('age') || 'young';
         
@@ -188,8 +207,12 @@
         let formatName = "";
         let typeName = "";
         let price = 0;
+        let currentOrderId = null;
 
-        // Таблица цен (ключи с точкой для 1.5h)
+        // Показываем нужные блоки в зависимости от возраста
+        document.getElementById('age-block').classList.add('hidden');
+        
+        // Таблица цен (как в database.py)
         const PRICES = {
             young: {
                 single_paint_1h: 1000,
@@ -205,7 +228,7 @@
             }
         };
 
-        // Выбор формата
+        // Логика выбора
         document.querySelectorAll('#format-grid .card').forEach(card => {
             card.addEventListener('click', () => {
                 document.querySelectorAll('#format-grid .card').forEach(c => c.classList.remove('selected'));
@@ -217,13 +240,11 @@
             });
         });
 
-        // Выбор направления
         document.querySelectorAll('#type-grid .card').forEach(card => {
             card.addEventListener('click', () => {
                 // Для 7+ лет пластилинография недоступна
                 if (ageGroup === 'old' && card.dataset.type === 'clay') {
                     if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
-                    tg.showAlert("Для детей 7+ лет доступна только живопись.");
                     return;
                 }
                 
@@ -236,7 +257,6 @@
             });
         });
 
-        // Выбор длительности
         document.querySelectorAll('#duration-grid .card').forEach(card => {
             card.addEventListener('click', () => {
                 document.querySelectorAll('#duration-grid .card').forEach(c => c.classList.remove('selected'));
@@ -260,9 +280,19 @@
             // Показываем блок длительности только для 7+ лет и живописи
             const durationBlock = document.getElementById('duration-block');
             if (ageGroup === 'old' && selectedType === 'paint') {
-                durationBlock.style.display = 'block';
+                durationBlock.classList.remove('hidden');
             } else {
-                durationBlock.style.display = 'none';
+                durationBlock.classList.add('hidden');
+                if (selectedType === 'clay') {
+                    // Для 7+ лет пластилинографии нет — сбрасываем
+                    selectedDuration = null;
+                }
+            }
+            
+            // Определяем длительность
+            let duration = '1h';
+            if (ageGroup === 'old' && selectedType === 'paint') {
+                duration = selectedDuration || '1h'; // по умолчанию 1 час
             }
             
             // Считаем цену
@@ -272,12 +302,8 @@
                     price = PRICES.young[key] || 0;
                 } else {
                     if (selectedType === 'paint') {
-                        if (selectedDuration) {
-                            const key = `${selectedFormat}_paint_${selectedDuration}`;
-                            price = PRICES.old[key] || 0;
-                        } else {
-                            price = 0;
-                        }
+                        const key = `${selectedFormat}_paint_${duration}`;
+                        price = PRICES.old[key] || 0;
                     } else {
                         price = 0;
                     }
@@ -286,11 +312,7 @@
                 document.getElementById('total-price').textContent = price + ' ₽';
                 
                 // Кнопка активна, если всё выбрано и введены имя/фамилия
-                let canPay = childName && childSurname && price > 0;
-                // Для 7+ и живописи нужно ещё выбрать длительность
-                if (ageGroup === 'old' && selectedType === 'paint' && !selectedDuration) {
-                    canPay = false;
-                }
+                const canPay = childName && childSurname && price > 0;
                 document.getElementById('pay-btn').disabled = !canPay;
             } else {
                 document.getElementById('total-price').textContent = '0 ₽';
@@ -304,24 +326,21 @@
             
             if (!selectedFormat || !selectedType || !childName || !childSurname) return;
             
-            let duration = '1h';
-            if (ageGroup === 'old' && selectedType === 'paint') {
-                duration = selectedDuration || '1h';
-            }
-            
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
             
+            // Отправляем данные боту
             tg.sendData(JSON.stringify({ 
                 action: "pay",
                 age: ageGroup,
                 format: selectedFormat,
                 type: selectedType,
-                duration: duration,
+                duration: selectedDuration || '1h',
                 childName: childName,
                 childSurname: childSurname,
                 price: price
             }));
             
+            // Показываем сообщение о том, что данные отправлены
             tg.showAlert("Данные отправлены! Сейчас бот откроет страницу оплаты.");
         }
     </script>
