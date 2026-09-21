@@ -152,6 +152,7 @@ body {
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
+tg.disableVerticalSwipes();
 
 const urlParams = new URLSearchParams(window.location.search);
 const ageGroup = urlParams.get('age') || 'young';
@@ -269,7 +270,7 @@ function pay() {
     duration = selectedDuration || '1h';
   }
 
-  tg.sendData(JSON.stringify({
+  const orderData = {
     action: "pay",
     age: ageGroup,
     format: selectedFormat,
@@ -278,7 +279,16 @@ function pay() {
     childName: childName,
     childSurname: childSurname,
     price: price
-  }));
+  };
+
+  try {
+    tg.sendData(JSON.stringify(orderData));
+    setTimeout(() => {
+      tg.close();
+    }, 300);
+  } catch (e) {
+    tg.showAlert("Не удалось отправить данные. Попробуйте ещё раз.");
+  }
 }
 </script>
 </body>
