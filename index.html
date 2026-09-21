@@ -154,6 +154,16 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 tg.disableVerticalSwipes();
 
+// Пробуем fullscreen (для sendData на телефоне)
+if (tg.requestFullscreen) {
+  tg.requestFullscreen();
+}
+
+// Проверяем версию Telegram
+if (!tg.isVersionAtLeast('6.1')) {
+  tg.showAlert("Обновите Telegram для оплаты");
+}
+
 const urlParams = new URLSearchParams(window.location.search);
 const ageGroup = urlParams.get('age') || 'young';
 
