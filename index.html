@@ -73,25 +73,6 @@ body {
 .btn-pay:active { transform: scale(0.97); }
 .btn-pay:disabled { opacity: 0.4; }
 .hidden { display: none !important; }
-.pay-block {
-  background: var(--card);
-  border-radius: 14px;
-  padding: 16px;
-  margin-top: 16px;
-}
-.pay-block h3 { font-size: 16px; margin-bottom: 12px; }
-.pay-link {
-  display: block;
-  background: linear-gradient(135deg, #4ecdc4, #44a08d);
-  color: white;
-  padding: 14px;
-  border-radius: 12px;
-  text-align: center;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 15px;
-}
-.pay-link:active { transform: scale(0.97); }
 </style>
 </head>
 <body>
@@ -166,16 +147,6 @@ body {
     <span id="total-price">0 ₽</span>
   </div>
   <button class="btn-pay" id="pay-btn" disabled onclick="pay()">Оплатить</button>
-</div>
-
-<div id="pay-block" class="hidden">
-  <div class="pay-block">
-    <h3>💳 Оплата</h3>
-    <p style="font-size:13px; color:var(--hint); margin-bottom:12px;">
-      Нажмите на ссылку ниже, оплатите и вернитесь в чат с ботом.
-    </p>
-    <a id="payment-link" class="pay-link" href="#" target="_blank">🔗 Перейти к оплате</a>
-  </div>
 </div>
 
 <script>
