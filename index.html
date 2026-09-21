@@ -178,9 +178,10 @@ const PRICES = {
   }
 };
 
-document.querySelectorAll('#format-grid .card').forEach(card => {
-  card.addEventListener('click', () => {
-    document.querySelectorAll('#format-grid .card').forEach(c => c.classList.remove('selected'));
+// === ВЫБОР ФОРМАТА ===
+document.querySelectorAll('#format-grid .card').forEach(function(card) {
+  card.addEventListener('click', function() {
+    document.querySelectorAll('#format-grid .card').forEach(function(c) { c.classList.remove('selected'); });
     card.classList.add('selected');
     selectedFormat = card.dataset.format;
     formatName = card.querySelector('.title').textContent;
@@ -188,14 +189,14 @@ document.querySelectorAll('#format-grid .card').forEach(card => {
   });
 });
 
-document.querySelectorAll('#type-grid .card').forEach(card => {
-  card.addEventListener('click', () => {
+// === ВЫБОР НАПРАВЛЕНИЯ ===
+document.querySelectorAll('#type-grid .card').forEach(function(card) {
+  card.addEventListener('click', function() {
     if (ageGroup === 'old' && card.dataset.type === 'clay') {
-      if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
       tg.showAlert("Для детей 7+ лет доступна только живопись.");
       return;
     }
-    document.querySelectorAll('#type-grid .card').forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll('#type-grid .card').forEach(function(c) { c.classList.remove('selected'); });
     card.classList.add('selected');
     selectedType = card.dataset.type;
     typeName = card.querySelector('.title').textContent;
@@ -203,18 +204,21 @@ document.querySelectorAll('#type-grid .card').forEach(card => {
   });
 });
 
-document.querySelectorAll('#duration-grid .card').forEach(card => {
-  card.addEventListener('click', () => {
-    document.querySelectorAll('#duration-grid .card').forEach(c => c.classList.remove('selected'));
+// === ВЫБОР ДЛИТЕЛЬНОСТИ ===
+document.querySelectorAll('#duration-grid .card').forEach(function(card) {
+  card.addEventListener('click', function() {
+    document.querySelectorAll('#duration-grid .card').forEach(function(c) { c.classList.remove('selected'); });
     card.classList.add('selected');
     selectedDuration = card.dataset.duration;
     updateUI();
   });
 });
 
+// === ПОЛЯ ВВОДА ===
 document.getElementById('child-name').addEventListener('input', updateUI);
 document.getElementById('child-surname').addEventListener('input', updateUI);
 
+// === ОБНОВЛЕНИЕ ИНТЕРФЕЙСА ===
 function updateUI() {
   document.getElementById('selected-format').textContent = formatName || '—';
   document.getElementById('selected-type').textContent = typeName || '—';
@@ -236,11 +240,11 @@ function updateUI() {
 
   if (selectedFormat && selectedType) {
     if (ageGroup === 'young') {
-      const key = `${selectedFormat}_${selectedType}_1h`;
+      const key = selectedFormat + '_' + selectedType + '_1h';
       price = PRICES.young[key] || 0;
     } else {
       if (selectedType === 'paint') {
-        const key = `${selectedFormat}_paint_${duration}`;
+        const key = selectedFormat + '_paint_' + duration;
         price = PRICES.old[key] || 0;
       } else {
         price = 0;
@@ -259,6 +263,7 @@ function updateUI() {
   }
 }
 
+// === ОПЛАТА ===
 function pay() {
   const childName = document.getElementById('child-name').value.trim();
   const childSurname = document.getElementById('child-surname').value.trim();
@@ -269,7 +274,7 @@ function pay() {
     duration = selectedDuration || '1h';
   }
 
-  tg.sendData(JSON.stringify({
+  const data = {
     action: "pay",
     age: ageGroup,
     format: selectedFormat,
@@ -278,7 +283,9 @@ function pay() {
     childName: childName,
     childSurname: childSurname,
     price: price
-  }));
+  };
+
+  tg.sendData(JSON.stringify(data));
 }
 </script>
 </body>
