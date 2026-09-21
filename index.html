@@ -303,7 +303,6 @@ function pay() {
     duration = selectedDuration || '1h';
   }
 
-  // Отправляем данные боту (sendData оставлен)
   tg.sendData(JSON.stringify({
     action: "pay",
     age: ageGroup,
@@ -315,7 +314,7 @@ function pay() {
     price: price
   }));
 
-  // НЕ закрываем Mini App, а показываем блок со ссылкой
+  // Показываем блок со ссылкой (Mini App не закрывается)
   document.getElementById('main-block').classList.add('hidden');
   document.getElementById('pay-block').classList.remove('hidden');
   document.getElementById('payment-link').href = PAYMENT_URL;
