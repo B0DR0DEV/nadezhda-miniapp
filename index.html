@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Студия Надежды</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
@@ -183,11 +183,14 @@ body {
 </div>
 
 <script>
-const tg = window.Telegram.WebApp;
-tg.expand();
+const tg = window.Telegram?.WebApp;
+if (tg) {
+  tg.ready();
+  tg.expand();
+}
 
 // ССЫЛКА НА ОПЛАТУ — ЗАМЕНИ НА СВОЮ
-const PAYMENT_URL = "https://example.com/pay";
+const PAYMENT_URL = "https://www.sberbank.ru/ru/choise_bank?requisiteNumber=79217905435&bankCode=100000000111";
 
 const urlParams = new URLSearchParams(window.location.search);
 const ageGroup = urlParams.get('age') || 'young';
@@ -227,7 +230,7 @@ document.querySelectorAll('#format-grid .card').forEach(function(card) {
 document.querySelectorAll('#type-grid .card').forEach(function(card) {
   card.addEventListener('click', function() {
     if (ageGroup === 'old' && card.dataset.type === 'clay') {
-      tg.showAlert("Для детей 7+ лет доступна только живопись.");
+      alert("Для детей 7+ лет доступна только живопись.");
       return;
     }
     document.querySelectorAll('#type-grid .card').forEach(function(c) { c.classList.remove('selected'); });
@@ -295,13 +298,16 @@ function updateUI() {
 }
 
 function pay() {
-  // Скрываем главный блок, показываем блок оплаты
   document.getElementById('main-block').classList.add('hidden');
   document.getElementById('pay-block').classList.remove('hidden');
 }
 
 function openPayment() {
-  tg.openLink(PAYMENT_URL);
+  try {
+    tg.openLink(PAYMENT_URL, { try_instant_view: false });
+  } catch (e) {
+    alert("Ошибка открытия ссылки: " + e.message);
+  }
 }
 
 function confirmPaid() {
@@ -324,7 +330,11 @@ function confirmPaid() {
     price: price
   };
 
-  tg.sendData(JSON.stringify(data));
+  try {
+    tg.sendData(JSON.stringify(data));
+  } catch (e) {
+    alert("Ошибка отправки: " + e.message);
+  }
 }
 </script>
 </body>
