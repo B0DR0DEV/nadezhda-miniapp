@@ -73,29 +73,10 @@ body {
 .btn-pay:active { transform: scale(0.97); }
 .btn-pay:disabled { opacity: 0.4; }
 .hidden { display: none !important; }
-.pay-block {
-  background: var(--card);
-  border-radius: 14px;
-  padding: 16px;
-  margin-top: 16px;
-}
-.pay-block h3 { font-size: 16px; margin-bottom: 12px; }
-.pay-link {
-  display: block;
-  background: linear-gradient(135deg, #4ecdc4, #44a08d);
-  color: white;
-  padding: 14px;
-  border-radius: 12px;
-  text-align: center;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 15px;
-  margin-bottom: 12px;
-}
-.pay-link:active { transform: scale(0.97); }
 .btn-confirm {
   width: 100%;
   padding: 14px;
+  margin-top: 12px;
   background: #4caf50;
   color: white;
   border: none;
@@ -183,14 +164,12 @@ body {
   </div>
 </div>
 
-<!-- Блок оплаты — показывается после "Оплатить" -->
-<div id="pay-block" class="hidden">
-  <div class="pay-block">
-    <h3>💳 Оплата</h3>
-    <p style="font-size:13px; color:var(--hint); margin-bottom:12px;">
-      Нажмите на ссылку ниже, оплатите и вернитесь сюда.
-    </p>
-    <a id="payment-link" class="pay-link" href="#" target="_blank">🔗 Перейти к оплате</a>
+<div id="confirm-block" class="hidden">
+  <div class="summary">
+    <div class="summary-row total">
+      <span>К оплате:</span>
+      <span id="confirm-price">0 ₽</span>
+    </div>
     <button class="btn-confirm" onclick="confirmPaid()">✅ Я оплатил</button>
   </div>
 </div>
@@ -209,8 +188,8 @@ let formatName = "";
 let typeName = "";
 let price = 0;
 
-// Ссылка на оплату — ЗАМЕНИ НА СВОЮ
-const PAYMENT_URL = "https://example.com/pay";
+// ССЫЛКА НА ОПЛАТУ — ЗАМЕНИ НА СВОЮ
+const PAYMENT_URL = "https://yandex.ru";
 
 const PRICES = {
   young: {
@@ -318,7 +297,7 @@ function pay() {
     duration = selectedDuration || '1h';
   }
 
-  // Сохраняем данные в window для confirmPaid
+  // Сохраняем данные заказа
   window._orderData = {
     action: "pay",
     age: ageGroup,
@@ -330,20 +309,29 @@ function pay() {
     price: price
   };
 
-  // Показываем блок оплаты
-  document.getElementById('main-block').classList.add('hidden');
-  document.getElementById('pay-block').classList.remove('hidden');
-  document.getElementById('payment-link').href = PAYMENT_URL;
+  // Показываем popup со ссылкой
+  tg.showPopup({
+    title: "Оплата",
+    message: "Нажмите «Открыть ссылку», чтобы оплатить.",
+    buttons: [
+      { id: "open", type: "default", text: "🔗 Открыть ссылку" },
+      { id: "cancel", type: "cancel", text: "Отмена" }
+    ]
+  }, (buttonId) => {
+    if (buttonId === "open") {
+      tg.openLink(PAYMENT_URL);
+      
+      // Показываем кнопку "Я оплатил"
+      document.getElementById('main-block').classList.add('hidden');
+      document.getElementById('confirm-block').classList.remove('hidden');
+      document.getElementById('confirm-price').textContent = price + ' ₽';
+    }
+  });
 }
 
 function confirmPaid() {
   if (!window._orderData) return;
-
-  // Отправляем данные боту через sendData (Mini App закроется)
-  tg.sendData(JSON.stringify({
-    ...window._orderData,
-    confirmed: true
-  }));
+  tg.sendData(JSON.stringify(window._orderData));
 }
 </script>
 </body>
