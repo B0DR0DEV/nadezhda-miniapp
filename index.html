@@ -100,74 +100,72 @@ body {
   <p>Рисование и лепка для детей</p>
 </div>
 
-<div id="main-block">
-  <div class="section-title">1. Формат занятия</div>
-  <div class="grid" id="format-grid">
-    <div class="card" data-format="single">
-      <div class="icon">👤</div>
-      <div class="title">Одиночное</div>
-      <div class="sub">Индивидуально</div>
-    </div>
-    <div class="card" data-format="group">
-      <div class="icon">👥</div>
-      <div class="title">Групповое</div>
-      <div class="sub">3+ человек</div>
-    </div>
+<div class="section-title">1. Формат занятия</div>
+<div class="grid" id="format-grid">
+  <div class="card" data-format="single">
+    <div class="icon">👤</div>
+    <div class="title">Одиночное</div>
+    <div class="sub">Индивидуально</div>
   </div>
+  <div class="card" data-format="group">
+    <div class="icon">👥</div>
+    <div class="title">Групповое</div>
+    <div class="sub">3+ человек</div>
+  </div>
+</div>
 
-  <div class="section-title">2. Направление</div>
-  <div class="grid" id="type-grid">
-    <div class="card" data-type="paint">
-      <div class="icon">🖌️</div>
-      <div class="title">Живопись</div>
-      <div class="sub">Краски, холст</div>
-    </div>
-    <div class="card" data-type="clay">
-      <div class="icon">🏺</div>
-      <div class="title">Пластилинография</div>
-      <div class="sub">Лепка</div>
-    </div>
+<div class="section-title">2. Направление</div>
+<div class="grid" id="type-grid">
+  <div class="card" data-type="paint">
+    <div class="icon">🖌️</div>
+    <div class="title">Живопись</div>
+    <div class="sub">Краски, холст</div>
   </div>
+  <div class="card" data-type="clay">
+    <div class="icon">🏺</div>
+    <div class="title">Пластилинография</div>
+    <div class="sub">Лепка</div>
+  </div>
+</div>
 
-  <div id="duration-block" class="hidden">
-    <div class="section-title">3. Длительность</div>
-    <div class="grid" id="duration-grid">
-      <div class="card" data-duration="1h">
-        <div class="icon">⏱</div>
-        <div class="title">1 час</div>
-      </div>
-      <div class="card" data-duration="1.5h">
-        <div class="icon">⏱</div>
-        <div class="title">1.5 часа</div>
-      </div>
+<div id="duration-block" class="hidden">
+  <div class="section-title">3. Длительность</div>
+  <div class="grid" id="duration-grid">
+    <div class="card" data-duration="1h">
+      <div class="icon">⏱</div>
+      <div class="title">1 час</div>
+    </div>
+    <div class="card" data-duration="1.5h">
+      <div class="icon">⏱</div>
+      <div class="title">1.5 часа</div>
     </div>
   </div>
+</div>
 
-  <div class="section-title">Данные ученика</div>
-  <div class="input-group">
-    <label>Имя ребёнка</label>
-    <input type="text" id="child-name" placeholder="Например, Аня">
-  </div>
-  <div class="input-group">
-    <label>Фамилия ребёнка</label>
-    <input type="text" id="child-surname" placeholder="Например, Иванова">
-  </div>
+<div class="section-title">Данные ученика</div>
+<div class="input-group">
+  <label>Имя ребёнка</label>
+  <input type="text" id="child-name" placeholder="Например, Аня">
+</div>
+<div class="input-group">
+  <label>Фамилия ребёнка</label>
+  <input type="text" id="child-surname" placeholder="Например, Иванова">
+</div>
 
-  <div class="summary">
-    <div class="summary-row">
-      <span>Формат:</span>
-      <span id="selected-format">—</span>
-    </div>
-    <div class="summary-row">
-      <span>Направление:</span>
-      <span id="selected-type">—</span>
-    </div>
-    <div class="summary-row total">
-      <span>Итого:</span>
-      <span id="total-price">0 ₽</span>
-    </div>
-    <button class="btn-pay" id="pay-btn" disabled onclick="pay()">Оплатить</button>
+<div class="summary">
+  <div class="summary-row">
+    <span>Формат:</span>
+    <span id="selected-format">—</span>
   </div>
+  <div class="summary-row">
+    <span>Направление:</span>
+    <span id="selected-type">—</span>
+  </div>
+  <div class="summary-row total">
+    <span>Итого:</span>
+    <span id="total-price">0 ₽</span>
+  </div>
+  <button class="btn-pay" id="pay-btn" disabled onclick="pay()">Оплатить</button>
 </div>
 
 <div id="pay-block" class="hidden">
@@ -193,9 +191,6 @@ let selectedDuration = null;
 let formatName = "";
 let typeName = "";
 let price = 0;
-
-// ССЫЛКА НА ОПЛАТУ — ЗАМЕНИ НА СВОЮ
-const PAYMENT_URL = "https://example.com/pay";
 
 const PRICES = {
   young: {
@@ -313,11 +308,6 @@ function pay() {
     childSurname: childSurname,
     price: price
   }));
-
-  // Показываем блок со ссылкой (Mini App не закрывается)
-  document.getElementById('main-block').classList.add('hidden');
-  document.getElementById('pay-block').classList.remove('hidden');
-  document.getElementById('payment-link').href = PAYMENT_URL;
 }
 </script>
 </body>
