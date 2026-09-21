@@ -90,7 +90,6 @@ body {
   text-decoration: none;
   font-weight: 600;
   font-size: 15px;
-  margin-bottom: 12px;
 }
 .pay-link:active { transform: scale(0.97); }
 </style>
@@ -171,7 +170,6 @@ body {
   </div>
 </div>
 
-<!-- Блок оплаты — показывается после "Оплатить" -->
 <div id="pay-block" class="hidden">
   <div class="pay-block">
     <h3>💳 Оплата</h3>
@@ -185,15 +183,6 @@ body {
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
-tg.disableVerticalSwipes();
-
-if (tg.requestFullscreen) {
-  tg.requestFullscreen();
-}
-
-if (!tg.isVersionAtLeast('6.1')) {
-  tg.showAlert("Обновите Telegram для оплаты");
-}
 
 const urlParams = new URLSearchParams(window.location.search);
 const ageGroup = urlParams.get('age') || 'young';
@@ -314,7 +303,8 @@ function pay() {
     duration = selectedDuration || '1h';
   }
 
-  const orderData = {
+  // Отправляем данные боту (sendData оставлен)
+  tg.sendData(JSON.stringify({
     action: "pay",
     age: ageGroup,
     format: selectedFormat,
@@ -323,16 +313,9 @@ function pay() {
     childName: childName,
     childSurname: childSurname,
     price: price
-  };
+  }));
 
-  // Отправляем данные боту (sendData оставлен)
-  try {
-    tg.sendData(JSON.stringify(orderData));
-  } catch (e) {
-    // ignore
-  }
-
-  // Показываем блок со ссылкой на оплату
+  // НЕ закрываем Mini App, а показываем блок со ссылкой
   document.getElementById('main-block').classList.add('hidden');
   document.getElementById('pay-block').classList.remove('hidden');
   document.getElementById('payment-link').href = PAYMENT_URL;
