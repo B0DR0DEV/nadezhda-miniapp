@@ -73,6 +73,38 @@ body {
 .btn-pay:active { transform: scale(0.97); }
 .btn-pay:disabled { opacity: 0.4; }
 .hidden { display: none !important; }
+.pay-block {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 16px;
+  margin-top: 16px;
+}
+.pay-block h3 { font-size: 16px; margin-bottom: 12px; }
+.pay-link {
+  display: block;
+  background: linear-gradient(135deg, #4ecdc4, #44a08d);
+  color: white;
+  padding: 14px;
+  border-radius: 12px;
+  text-align: center;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+.pay-link:active { transform: scale(0.97); }
+.btn-confirm {
+  width: 100%;
+  padding: 14px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-confirm:active { transform: scale(0.97); }
 </style>
 </head>
 <body>
@@ -81,72 +113,86 @@ body {
   <p>Рисование и лепка для детей</p>
 </div>
 
-<div class="section-title">1. Формат занятия</div>
-<div class="grid" id="format-grid">
-  <div class="card" data-format="single">
-    <div class="icon">👤</div>
-    <div class="title">Одиночное</div>
-    <div class="sub">Индивидуально</div>
-  </div>
-  <div class="card" data-format="group">
-    <div class="icon">👥</div>
-    <div class="title">Групповое</div>
-    <div class="sub">3+ человек</div>
-  </div>
-</div>
-
-<div class="section-title">2. Направление</div>
-<div class="grid" id="type-grid">
-  <div class="card" data-type="paint">
-    <div class="icon">🖌️</div>
-    <div class="title">Живопись</div>
-    <div class="sub">Краски, холст</div>
-  </div>
-  <div class="card" data-type="clay">
-    <div class="icon">🏺</div>
-    <div class="title">Пластилинография</div>
-    <div class="sub">Лепка</div>
-  </div>
-</div>
-
-<div id="duration-block" class="hidden">
-  <div class="section-title">3. Длительность</div>
-  <div class="grid" id="duration-grid">
-    <div class="card" data-duration="1h">
-      <div class="icon">⏱</div>
-      <div class="title">1 час</div>
+<div id="main-block">
+  <div class="section-title">1. Формат занятия</div>
+  <div class="grid" id="format-grid">
+    <div class="card" data-format="single">
+      <div class="icon">👤</div>
+      <div class="title">Одиночное</div>
+      <div class="sub">Индивидуально</div>
     </div>
-    <div class="card" data-duration="1.5h">
-      <div class="icon">⏱</div>
-      <div class="title">1.5 часа</div>
+    <div class="card" data-format="group">
+      <div class="icon">👥</div>
+      <div class="title">Групповое</div>
+      <div class="sub">3+ человек</div>
     </div>
   </div>
+
+  <div class="section-title">2. Направление</div>
+  <div class="grid" id="type-grid">
+    <div class="card" data-type="paint">
+      <div class="icon">🖌️</div>
+      <div class="title">Живопись</div>
+      <div class="sub">Краски, холст</div>
+    </div>
+    <div class="card" data-type="clay">
+      <div class="icon">🏺</div>
+      <div class="title">Пластилинография</div>
+      <div class="sub">Лепка</div>
+    </div>
+  </div>
+
+  <div id="duration-block" class="hidden">
+    <div class="section-title">3. Длительность</div>
+    <div class="grid" id="duration-grid">
+      <div class="card" data-duration="1h">
+        <div class="icon">⏱</div>
+        <div class="title">1 час</div>
+      </div>
+      <div class="card" data-duration="1.5h">
+        <div class="icon">⏱</div>
+        <div class="title">1.5 часа</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Данные ученика</div>
+  <div class="input-group">
+    <label>Имя ребёнка</label>
+    <input type="text" id="child-name" placeholder="Например, Аня">
+  </div>
+  <div class="input-group">
+    <label>Фамилия ребёнка</label>
+    <input type="text" id="child-surname" placeholder="Например, Иванова">
+  </div>
+
+  <div class="summary">
+    <div class="summary-row">
+      <span>Формат:</span>
+      <span id="selected-format">—</span>
+    </div>
+    <div class="summary-row">
+      <span>Направление:</span>
+      <span id="selected-type">—</span>
+    </div>
+    <div class="summary-row total">
+      <span>Итого:</span>
+      <span id="total-price">0 ₽</span>
+    </div>
+    <button class="btn-pay" id="pay-btn" disabled onclick="pay()">Оплатить</button>
+  </div>
 </div>
 
-<div class="section-title">Данные ученика</div>
-<div class="input-group">
-  <label>Имя ребёнка</label>
-  <input type="text" id="child-name" placeholder="Например, Аня">
-</div>
-<div class="input-group">
-  <label>Фамилия ребёнка</label>
-  <input type="text" id="child-surname" placeholder="Например, Иванова">
-</div>
-
-<div class="summary">
-  <div class="summary-row">
-    <span>Формат:</span>
-    <span id="selected-format">—</span>
+<!-- Блок оплаты — показывается после "Оплатить" -->
+<div id="pay-block" class="hidden">
+  <div class="pay-block">
+    <h3>💳 Оплата</h3>
+    <p style="font-size:13px; color:var(--hint); margin-bottom:12px;">
+      Нажмите на ссылку ниже, оплатите и вернитесь сюда.
+    </p>
+    <a id="payment-link" class="pay-link" href="#" target="_blank">🔗 Перейти к оплате</a>
+    <button class="btn-confirm" onclick="confirmPaid()">✅ Я оплатил</button>
   </div>
-  <div class="summary-row">
-    <span>Направление:</span>
-    <span id="selected-type">—</span>
-  </div>
-  <div class="summary-row total">
-    <span>Итого:</span>
-    <span id="total-price">0 ₽</span>
-  </div>
-  <button class="btn-pay" id="pay-btn" disabled onclick="pay()">Оплатить</button>
 </div>
 
 <script>
@@ -162,6 +208,9 @@ let selectedDuration = null;
 let formatName = "";
 let typeName = "";
 let price = 0;
+
+// Ссылка на оплату — ЗАМЕНИ НА СВОЮ
+const PAYMENT_URL = "https://example.com/pay";
 
 const PRICES = {
   young: {
@@ -269,7 +318,8 @@ function pay() {
     duration = selectedDuration || '1h';
   }
 
-  tg.sendData(JSON.stringify({
+  // Сохраняем данные в window для confirmPaid
+  window._orderData = {
     action: "pay",
     age: ageGroup,
     format: selectedFormat,
@@ -278,6 +328,21 @@ function pay() {
     childName: childName,
     childSurname: childSurname,
     price: price
+  };
+
+  // Показываем блок оплаты
+  document.getElementById('main-block').classList.add('hidden');
+  document.getElementById('pay-block').classList.remove('hidden');
+  document.getElementById('payment-link').href = PAYMENT_URL;
+}
+
+function confirmPaid() {
+  if (!window._orderData) return;
+
+  // Отправляем данные боту через sendData (Mini App закроется)
+  tg.sendData(JSON.stringify({
+    ...window._orderData,
+    confirmed: true
   }));
 }
 </script>
