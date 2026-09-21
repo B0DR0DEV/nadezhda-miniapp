@@ -178,7 +178,6 @@ const PRICES = {
   }
 };
 
-// === ВЫБОР ФОРМАТА ===
 document.querySelectorAll('#format-grid .card').forEach(function(card) {
   card.addEventListener('click', function() {
     document.querySelectorAll('#format-grid .card').forEach(function(c) { c.classList.remove('selected'); });
@@ -189,7 +188,6 @@ document.querySelectorAll('#format-grid .card').forEach(function(card) {
   });
 });
 
-// === ВЫБОР НАПРАВЛЕНИЯ ===
 document.querySelectorAll('#type-grid .card').forEach(function(card) {
   card.addEventListener('click', function() {
     if (ageGroup === 'old' && card.dataset.type === 'clay') {
@@ -204,7 +202,6 @@ document.querySelectorAll('#type-grid .card').forEach(function(card) {
   });
 });
 
-// === ВЫБОР ДЛИТЕЛЬНОСТИ ===
 document.querySelectorAll('#duration-grid .card').forEach(function(card) {
   card.addEventListener('click', function() {
     document.querySelectorAll('#duration-grid .card').forEach(function(c) { c.classList.remove('selected'); });
@@ -214,11 +211,9 @@ document.querySelectorAll('#duration-grid .card').forEach(function(card) {
   });
 });
 
-// === ПОЛЯ ВВОДА ===
 document.getElementById('child-name').addEventListener('input', updateUI);
 document.getElementById('child-surname').addEventListener('input', updateUI);
 
-// === ОБНОВЛЕНИЕ ИНТЕРФЕЙСА ===
 function updateUI() {
   document.getElementById('selected-format').textContent = formatName || '—';
   document.getElementById('selected-type').textContent = typeName || '—';
@@ -263,7 +258,6 @@ function updateUI() {
   }
 }
 
-// === ОПЛАТА ===
 function pay() {
   const childName = document.getElementById('child-name').value.trim();
   const childSurname = document.getElementById('child-surname').value.trim();
